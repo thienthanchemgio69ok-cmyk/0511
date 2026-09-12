@@ -13,13 +13,13 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 
 nvm install --lts=jod
-npm install -g pnpm pm2
+npm install -g pm2
 
-pnpm install
-pnpm build
+npm install
+npm run build
 
 pm2 delete all
-pm2 start pnpm --name "next-js" -- start
+pm2 start npm --name "next-js" -- start
 
 cp nginx.conf /etc/nginx/sites-available/default
 ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default

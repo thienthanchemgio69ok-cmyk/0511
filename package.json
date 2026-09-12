@@ -2,7 +2,6 @@
     "name": "code0411",
     "version": "0.1.0",
     "private": true,
-    "packageManager": "pnpm@10.34.5",
     "scripts": {
         "dev": "next dev",
         "build": "eslint --fix && next build",
